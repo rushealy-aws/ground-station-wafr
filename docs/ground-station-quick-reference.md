@@ -14,8 +14,8 @@ A quick reference for Solutions Architects conducting Well Architected reviews f
 ### Available Regions and Antennas
 | Region | Location | Antenna Types | Use Cases |
 |--------|----------|---------------|-----------|
-| us-east-1 | Ohio | S-band, X-band, UHF | LEO, MEO satellites |
-| us-west-2 | Oregon | S-band, X-band, UHF | LEO, MEO satellites |
+| us-east-1 | Ohio | S-band, X-band | LEO, MEO satellites |
+| us-west-2 | Oregon | S-band, X-band | LEO, MEO satellites |
 | eu-west-1 | Ireland | S-band, X-band | European coverage |
 | ap-southeast-2 | Australia | S-band, X-band | Asia-Pacific coverage |
 | eu-north-1 | Sweden | S-band, X-band | Arctic coverage |
