@@ -104,7 +104,7 @@ Before scheduling the review session, conduct discovery to understand:
 ### Step 4: Review Session Structure
 
 **Recommended Session Format:**
-- **Duration**: 4-6 hours (can be split across multiple sessions)
+- **Duration**: 1-3 hours (can be split across multiple sessions)
 - **Participants**: 6-10 stakeholders maximum
 - **Format**: Interactive workshop with screen sharing
 - **Documentation**: Assign a note-taker to capture decisions and action items
@@ -316,7 +316,7 @@ Ground Station systems often integrate with multiple external systems:
 
 ### Best Practices
 - [Ground Station Best Practices](https://docs.aws.amazon.com/ground-station/latest/ug/best-practices.html)
-- [Satellite Data Processing Patterns](https://aws.amazon.com/solutions/implementations/satellite-data-processing/)
+- [AWS Architecture Center - Satellite Solutions](https://aws.amazon.com/architecture/)
 
 ### Training and Certification
 - [AWS Ground Station Technical Essentials](https://aws.amazon.com/training/)
