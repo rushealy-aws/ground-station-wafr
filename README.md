@@ -348,7 +348,7 @@ Ground Station systems often integrate with multiple external systems:
 
 ### Best Practices
 - [Ground Station Best Practices](https://docs.aws.amazon.com/ground-station/latest/ug/best-practices.html)
-- [AWS Architecture Center - Satellite Solutions](https://aws.amazon.com/architecture/)
+- [Satellite Mission Operations Centers on AWS](https://docs.aws.amazon.com/architecture-diagrams/latest/satellite-mission-operations-center/satellite-mission-operations-center.html)
 
 ### Training and Certification
 - [AWS Ground Station Technical Essentials](https://aws.amazon.com/training/)

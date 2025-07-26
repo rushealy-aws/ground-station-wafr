@@ -6,7 +6,7 @@ This script demonstrates automated contact scheduling for AWS Ground Station
 using best practices for conflict resolution and optimization.
 
 Usage:
-    python contact-scheduler.py --satellite-id NOAA-18 --start-time 2025-01-27T10:00:00Z --duration 600
+    python contact-scheduler.py --satellite-id arn:aws:groundstation:us-east-2:123456789012:satellite:12345678-1234-1234-1234-123456789012 --start-time 2025-01-27T10:00:00Z --duration 600
 
 Requirements:
     - boto3
@@ -179,9 +179,11 @@ class GroundStationScheduler:
             str: Contact ID if successful, None otherwise
         """
         try:
+            # Note: satellite_id should be a UUID format satellite ARN
+            # Format: arn:aws:groundstation:region:account:satellite:uuid
             response = self.gs_client.reserve_contact(
                 missionProfileArn=mission_profile_arn,
-                satelliteArn=f"arn:aws:groundstation::satellite:{satellite_id}",
+                satelliteArn=satellite_id,  # Expecting full satellite ARN
                 startTime=contact_params['startTime'],
                 endTime=contact_params['endTime'],
                 groundStation=contact_params['groundStationId'],
@@ -256,7 +258,7 @@ def main():
     Main function for command-line usage
     """
     parser = argparse.ArgumentParser(description='Ground Station Contact Scheduler')
-    parser.add_argument('--satellite-id', required=True, help='Satellite identifier')
+    parser.add_argument('--satellite-id', required=True, help='Satellite ARN (e.g., arn:aws:groundstation:region:account:satellite:uuid)')
     parser.add_argument('--start-time', required=True, help='Preferred start time (ISO format)')
     parser.add_argument('--duration', type=int, required=True, help='Contact duration in seconds')
     parser.add_argument('--mission-profile-arn', required=True, help='Mission profile ARN')

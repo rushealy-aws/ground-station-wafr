@@ -51,22 +51,22 @@ pip install boto3 python-dateutil
 ```bash
 # Schedule a contact with automatic optimization
 python contact-scheduler.py \
-  --satellite-id NOAA-18 \
+  --satellite-id arn:aws:groundstation:us-east-2:123456789012:satellite:12345678-1234-1234-1234-123456789012 \
   --start-time 2025-01-27T10:00:00Z \
   --duration 600 \
-  --mission-profile-arn arn:aws:groundstation:us-east-1:123456789012:mission-profile/12345678-1234-1234-1234-123456789012
+  --mission-profile-arn arn:aws:groundstation:us-east-2:123456789012:mission-profile/12345678-1234-1234-1234-123456789012
 
 # Dry run to see optimal window without scheduling
 python contact-scheduler.py \
-  --satellite-id NOAA-18 \
+  --satellite-id arn:aws:groundstation:us-east-2:123456789012:satellite:12345678-1234-1234-1234-123456789012 \
   --start-time 2025-01-27T10:00:00Z \
   --duration 600 \
-  --mission-profile-arn arn:aws:groundstation:us-east-1:123456789012:mission-profile/12345678-1234-1234-1234-123456789012 \
+  --mission-profile-arn arn:aws:groundstation:us-east-2:123456789012:mission-profile/12345678-1234-1234-1234-123456789012 \
   --dry-run
 ```
 
 **Command Line Options:**
-- `--satellite-id`: Satellite identifier (required)
+- `--satellite-id`: Satellite ARN in format arn:aws:groundstation:region:account:satellite:uuid (required)
 - `--start-time`: Preferred start time in ISO format (required)
 - `--duration`: Contact duration in seconds (required)
 - `--mission-profile-arn`: Mission profile ARN (required)

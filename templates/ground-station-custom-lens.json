@@ -16,8 +16,8 @@
               "id": "automated_scheduling",
               "title": "Implement automated contact scheduling with conflict resolution",
               "helpfulResource": {
-                "displayText": "AWS Ground Station provides APIs for automated scheduling and conflict management. Implement automated systems to optimize antenna utilization and minimize scheduling conflicts.",
-                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/scheduling-contacts.html"
+                "displayText": "AWS Ground Station provides APIs for automated scheduling and conflict management. Use ReserveContact API to implement automated systems that optimize antenna utilization and minimize scheduling conflicts.",
+                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/contacts.html"
               },
               "improvementPlan": {
                 "displayText": "Develop automated scheduling systems using AWS Ground Station APIs, implement conflict resolution algorithms, and create dashboards for mission planning visibility."
@@ -39,7 +39,7 @@
               "title": "Implement comprehensive monitoring and alerting for satellite passes",
               "helpfulResource": {
                 "displayText": "Real-time monitoring of satellite contacts is crucial for mission success. Use CloudWatch and custom metrics to track contact performance and alert on issues.",
-                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/monitoring-cloudwatch.html"
+                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/monitoring.html"
               },
               "improvementPlan": {
                 "displayText": "Set up CloudWatch dashboards, configure alerts for contact failures, implement real-time monitoring of signal quality and data reception rates."
@@ -191,7 +191,7 @@
               "title": "Deploy across multiple AWS regions with Ground Station antennas",
               "helpfulResource": {
                 "displayText": "Use multiple AWS regions with Ground Station capabilities to provide redundancy and increase contact opportunities for satellites.",
-                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/regions-and-endpoints.html"
+                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/aws-ground-station-antenna-locations.html"
               },
               "improvementPlan": {
                 "displayText": "Identify optimal regions for satellite coverage, implement multi-region deployments, and create automated failover mechanisms between regions."
@@ -319,7 +319,7 @@
               "title": "Optimize contact duration and scheduling efficiency",
               "helpfulResource": {
                 "displayText": "Analyze satellite pass predictions and optimize contact scheduling to minimize antenna time while maximizing data collection efficiency.",
-                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/scheduling-contacts.html"
+                "url": "https://docs.aws.amazon.com/ground-station/latest/ug/contacts.html"
               },
               "improvementPlan": {
                 "displayText": "Implement contact duration optimization algorithms, analyze historical data to improve scheduling efficiency, and automate contact parameter tuning."
