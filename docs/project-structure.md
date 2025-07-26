@@ -242,6 +242,6 @@ For new users of this guide:
 
 ---
 
-**Maintained by:** AWS Solutions Architecture Team  
-**Contact:** [Contact Information]  
-**Last Updated:** [Date]
+**Maintained by:** AWS Aerospace & Satellite Solutions Architecture Team  
+**Contact:** aws-as-sa@amazon.com 
+**Last Updated:** 2025-07-26
