@@ -280,5 +280,5 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 - [Ground Station Best Practices](https://docs.aws.amazon.com/ground-station/latest/ug/best-practices.html)
 - [AWS Support](https://aws.amazon.com/support/)
 
-**Last Updated:** [Date]  
+**Last Updated:** 2025-07-26
 **Version:** 1.0
