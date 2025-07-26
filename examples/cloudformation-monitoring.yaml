@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Ground Station monitoring and alerting setup'
+
+Parameters:
+  NotificationEmail:
+    Type: String
+    Description: Email address for receiving Ground Station alerts
+    AllowedPattern: ^[^\s@]+@[^\s@]+\.[^\s@]+$
+  
+  GroundStationRegion:
+    Type: String
+    Description: AWS region where Ground Station antennas are located
+    Default: us-east-1
+    AllowedValues:
+      - us-east-1
+      - us-west-2
+      - eu-west-1
+      - ap-southeast-2
+      - eu-north-1
+
+Resources:
+  # SNS Topic for Ground Station alerts
+  GroundStationAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ground-station-alerts
+      DisplayName: Ground Station Monitoring Alerts
+      
+  # SNS Subscription for email notifications
+  EmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      TopicArn: !Ref GroundStationAlertsTopic
+      Endpoint: !Ref NotificationEmail
+
+  # CloudWatch Dashboard for Ground Station metrics
+  GroundStationDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: GroundStation-Operations
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/GroundStation", "ContactState", "ContactId", "ALL" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${GroundStationRegion}",
+                "title": "Contact States",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/GroundStation", "DataflowEndpointGroupState", "DataflowEndpointGroupId", "ALL" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${GroundStationRegion}",
+                "title": "Dataflow Endpoint States",
+                "period": 300
+              }
+            }
+          ]
+        }
+
+  # CloudWatch Alarm for failed contacts
+  ContactFailureAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: GroundStation-ContactFailures
+      AlarmDescription: Alert when Ground Station contacts fail
+      MetricName: ContactState
+      Namespace: AWS/GroundStation
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref GroundStationAlertsTopic
+      TreatMissingData: notBreaching
+
+  # IAM Role for Ground Station operations monitoring
+  GroundStationMonitoringRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GroundStation-Monitoring-Role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: GroundStationMonitoringPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - groundstation:ListContacts
+                  - groundstation:DescribeContact
+                  - groundstation:GetMinuteUsage
+                  - cloudwatch:PutMetricData
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+
+  # Lambda function for custom Ground Station metrics
+  GroundStationMetricsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ground-station-custom-metrics
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: !GetAtt GroundStationMonitoringRole.Arn
+      Timeout: 60
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import datetime
+          from botocore.exceptions import ClientError
+          
+          def lambda_handler(event, context):
+              """
+              Lambda function to collect custom Ground Station metrics
+              """
+              groundstation = boto3.client('groundstation')
+              cloudwatch = boto3.client('cloudwatch')
+              
+              try:
+                  # Get recent contacts
+                  end_time = datetime.datetime.utcnow()
+                  start_time = end_time - datetime.timedelta(hours=1)
+                  
+                  response = groundstation.list_contacts(
+                      startTime=start_time,
+                      endTime=end_time,
+                      statusList=['COMPLETED', 'FAILED', 'CANCELLED']
+                  )
+                  
+                  # Count contacts by status
+                  status_counts = {}
+                  for contact in response.get('contactList', []):
+                      status = contact['contactStatus']
+                      status_counts[status] = status_counts.get(status, 0) + 1
+                  
+                  # Send custom metrics to CloudWatch
+                  for status, count in status_counts.items():
+                      cloudwatch.put_metric_data(
+                          Namespace='GroundStation/Custom',
+                          MetricData=[
+                              {
+                                  'MetricName': f'ContactCount_{status}',
+                                  'Value': count,
+                                  'Unit': 'Count',
+                                  'Timestamp': datetime.datetime.utcnow()
+                              }
+                          ]
+                      )
+                  
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps(f'Processed {len(response.get("contactList", []))} contacts')
+                  }
+                  
+              except ClientError as e:
+                  print(f'Error: {e}')
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps(f'Error: {str(e)}')
+                  }
+
+  # EventBridge rule to trigger metrics collection
+  MetricsCollectionRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: ground-station-metrics-collection
+      Description: Trigger Ground Station metrics collection every hour
+      ScheduleExpression: rate(1 hour)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt GroundStationMetricsFunction.Arn
+          Id: GroundStationMetricsTarget
+
+  # Permission for EventBridge to invoke Lambda
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref GroundStationMetricsFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MetricsCollectionRule.Arn
+
+Outputs:
+  DashboardURL:
+    Description: URL to the Ground Station CloudWatch Dashboard
+    Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards:name=${GroundStationDashboard}'
+    
+  SNSTopicArn:
+    Description: ARN of the SNS topic for Ground Station alerts
+    Value: !Ref GroundStationAlertsTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-AlertsTopic'
+      
+  MonitoringRoleArn:
+    Description: ARN of the IAM role for Ground Station monitoring
+    Value: !GetAtt GroundStationMonitoringRole.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-MonitoringRole'
