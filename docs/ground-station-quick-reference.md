@@ -11,14 +11,64 @@ A quick reference for Solutions Architects conducting Well Architected reviews f
 - **Data Processing**: Integration with AWS services for real-time and batch processing
 - **Mission Planning**: APIs and tools for automated mission planning and execution
 
-### Available Regions and Antennas
-| Region | Location | Antenna Types | Use Cases |
-|--------|----------|---------------|-----------|
-| us-east-1 | Ohio | S-band, X-band | LEO, MEO satellites |
-| us-west-2 | Oregon | S-band, X-band | LEO, MEO satellites |
-| eu-west-1 | Ireland | S-band, X-band | European coverage |
-| ap-southeast-2 | Australia | S-band, X-band | Asia-Pacific coverage |
-| eu-north-1 | Sweden | S-band, X-band | Arctic coverage |
+### Available Ground Station Locations
+
+| Ground Station Name | Location | AWS Region Name | AWS Region Code | Notes |
+|---------------------|----------|-----------------|-----------------|-------|
+| Alaska 1 | Alaska, USA | US West (Oregon) | us-west-2 | Not physically located in an AWS region |
+| Bahrain 1 | Bahrain | Middle East (Bahrain) | me-south-1 | |
+| Cape Town 1 | Cape Town, South Africa | Africa (Cape Town) | af-south-1 | |
+| Dubbo 1 | Dubbo, Australia | Asia Pacific (Sydney) | ap-southeast-2 | Not physically located in an AWS region |
+| Hawaii 1 | Hawaii, USA | US West (Oregon) | us-west-2 | Not physically located in an AWS region |
+| Ireland 1 | Ireland | Europe (Ireland) | eu-west-1 | |
+| Ohio 1 | Ohio, USA | US East (Ohio) | us-east-2 | |
+| Oregon 1 | Oregon, USA | US West (Oregon) | us-west-2 | |
+| Punta Arenas 1 | Punta Arenas, Chile | South America (São Paulo) | sa-east-1 | Not physically located in an AWS region |
+| Seoul 1 | Seoul, South Korea | Asia Pacific (Seoul) | ap-northeast-2 | |
+| Singapore 1 | Singapore | Asia Pacific (Singapore) | ap-southeast-1 | |
+| Stockholm 1 | Stockholm, Sweden | Europe (Stockholm) | eu-north-1 | |
+
+### Control Plane and Data Delivery Regions
+
+AWS Ground Station control plane and data delivery are available in the following regions:
+
+| Region Name | Region Code | Endpoint |
+|-------------|-------------|----------|
+| US East (N. Virginia) | us-east-1 | groundstation.us-east-1.amazonaws.com |
+| US East (Ohio) | us-east-2 | groundstation.us-east-2.amazonaws.com |
+| US West (Oregon) | us-west-2 | groundstation.us-west-2.amazonaws.com |
+| Africa (Cape Town) | af-south-1 | groundstation.af-south-1.amazonaws.com |
+| Asia Pacific (Seoul) | ap-northeast-2 | groundstation.ap-northeast-2.amazonaws.com |
+| Asia Pacific (Singapore) | ap-southeast-1 | groundstation.ap-southeast-1.amazonaws.com |
+| Asia Pacific (Sydney) | ap-southeast-2 | groundstation.ap-southeast-2.amazonaws.com |
+| Europe (Frankfurt) | eu-central-1 | groundstation.eu-central-1.amazonaws.com |
+| Europe (Ireland) | eu-west-1 | groundstation.eu-west-1.amazonaws.com |
+| Europe (Stockholm) | eu-north-1 | groundstation.eu-north-1.amazonaws.com |
+| Middle East (Bahrain) | me-south-1 | groundstation.me-south-1.amazonaws.com |
+| South America (São Paulo) | sa-east-1 | groundstation.sa-east-1.amazonaws.com |
+
+### Antenna Capabilities
+
+All Ground Station locations support the following capabilities:
+
+#### X-band Capabilities
+- **X-band Wideband Downlink**: 7750-8500 MHz, 50-400 MHz bandwidth, RHCP/LHCP
+  - Requires AWS Ground Station Agent
+  - Not supported in Alaska 1 or Punta Arenas 1
+  - Multiple concurrent channels available
+- **X-band Narrowband Downlink**: 7750-8500 MHz, up to 40 MHz bandwidth, RHCP/LHCP
+- **X-band Demodulated/Decoded Downlink**: 7750-8500 MHz, up to 500 MHz bandwidth, RHCP/LHCP
+
+#### S-band Capabilities
+- **S-band Downlink**: 2200-2290 MHz, up to 40 MHz bandwidth, RHCP/LHCP
+- **S-band Uplink**: 2025-2110 MHz, up to 40 MHz bandwidth, RHCP/LHCP
+  - EIRP 20-50 dBW
+- **S-band Uplink Echo**: 2025-2110 MHz, 2 MHz bandwidth, RHCP/LHCP
+
+#### Additional Capabilities
+- **Tracking**: Auto-tracking and program tracking support
+- **Multi-channel**: Multiple concurrent communication paths
+- **Polarization**: Both RHCP (right-handed circular) and LHCP (left-handed circular) polarization
 
 ## Common Ground Station Architectures
 
@@ -38,6 +88,12 @@ Satellite → Ground Station → S3 → EventBridge → Step Functions → Batch
 ```
 Satellite → Ground Station → Kinesis Data Streams (real-time)
                           → S3 → Batch Processing (historical)
+```
+
+### 4. Wideband Processing with Ground Station Agent
+```
+Satellite → Ground Station → Ground Station Agent → S3 → Processing Pipeline
+                          → Real-time streaming to Kinesis
 ```
 
 ## Well Architected Considerations by Pillar
@@ -137,7 +193,7 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 ### Cost Optimization
 
 #### Key Questions to Ask
-- How do you optimize antenna usage costs?
+- How do you optimize antenna usage?
 - What strategies exist for managing data transfer costs?
 - How do you implement storage lifecycle management?
 - What reserved capacity planning is in place?
@@ -166,13 +222,6 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 - **Antenna Utilization**: Percentage of available antenna time used
 - **Processing Latency**: Time from data reception to processed output
 
-### Cost Metrics
-- **Cost per Contact**: Total cost divided by number of contacts
-- **Cost per GB**: Total cost divided by data volume processed
-- **Antenna Cost Efficiency**: Cost per minute of antenna time
-- **Storage Cost per TB**: Monthly storage costs per terabyte
-- **Processing Cost per Job**: Cost per data processing job
-
 ### Security and Compliance Metrics
 - **Access Control Violations**: Number of unauthorized access attempts
 - **Encryption Coverage**: Percentage of data encrypted at rest and in transit
@@ -191,6 +240,7 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 - **Amazon EventBridge**: Event-driven architecture coordination
 - **AWS Step Functions**: Workflow orchestration for complex processing
 - **Amazon SNS/SQS**: Messaging and notifications
+- **AWS Ground Station Agent**: Wideband data processing
 
 ### Third-Party Integrations
 - **Mission Planning Software**: Integration with existing planning tools
@@ -212,17 +262,17 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 - **Investigation**: Monitor processing metrics, check resource utilization
 - **Resolution**: Scale compute resources, optimize processing algorithms
 
-### High Costs
-- **Symptoms**: Unexpected cost increases, budget overruns
-- **Common Causes**: Inefficient antenna usage, inappropriate storage classes
-- **Investigation**: Analyze cost breakdown, review usage patterns
-- **Resolution**: Optimize scheduling, implement lifecycle policies
-
 ### Security Violations
 - **Symptoms**: Unauthorized access, compliance failures
 - **Common Causes**: Overly broad permissions, missing encryption
 - **Investigation**: Review access logs, audit security configurations
 - **Resolution**: Implement least privilege, enable encryption
+
+### Wideband Processing Issues
+- **Symptoms**: Data loss in wideband downlinks, processing errors
+- **Common Causes**: Ground Station Agent configuration, bandwidth limitations
+- **Investigation**: Check Agent logs, verify bandwidth allocation
+- **Resolution**: Optimize Agent configuration, adjust bandwidth settings
 
 ## Regulatory Considerations
 
@@ -270,15 +320,33 @@ Satellite → Ground Station → Kinesis Data Streams (real-time)
 5. Begin forensic analysis if required
 6. Update security controls based on findings
 
+## Service Quotas and Limits
+
+### Key Service Quotas (Default Values)
+- **Configs**: 100 per region (adjustable)
+- **Mission Profiles**: 100 per region (adjustable)
+- **Dataflow Endpoint Groups**: 100 per region (adjustable)
+- **Dataflow Endpoints per Group**: 20 per region (adjustable)
+- **Maximum Contact Duration**: 20 minutes (adjustable)
+- **Contact Lead Time Maximum**: 7 days (adjustable)
+- **Enabled Ephemerides**: 30 per satellite (adjustable)
+
+### Digital Twin Availability
+- Available in all AWS regions where Ground Station is supported
+- Exact copies of production ground stations with "Digital Twin " prefix
+- Used for testing and validation without affecting production operations
+
 ---
 
 ## Quick Links
 
 - [AWS Ground Station Documentation](https://docs.aws.amazon.com/ground-station/)
-- [Well Architected Framework](https://docs.aws.amazon.com/wellarchitected/)
-- [Ground Station Pricing](https://aws.amazon.com/ground-station/pricing/)
+- [Ground Station Locations](https://docs.aws.amazon.com/ground-station/latest/ug/aws-ground-station-antenna-locations.html)
+- [Ground Station Endpoints and Quotas](https://docs.aws.amazon.com/general/latest/gr/gs.html)
 - [Ground Station Best Practices](https://docs.aws.amazon.com/ground-station/latest/ug/best-practices.html)
+- [Ground Station Agent User Guide](https://docs.aws.amazon.com/ground-station/latest/gs-agent-ug/)
+- [Well Architected Framework](https://docs.aws.amazon.com/wellarchitected/)
 - [AWS Support](https://aws.amazon.com/support/)
 
-**Last Updated:** 2025-07-26
-**Version:** 1.0
+**Last Updated:** January 2025  
+**Version:** 2.0
