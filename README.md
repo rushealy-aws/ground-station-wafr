@@ -14,7 +14,7 @@ This project provides step-by-step instructions, templates, and tools for Soluti
 1. **Import the Custom Lens**: Use [`templates/ground-station-custom-lens.json`](templates/ground-station-custom-lens.json) in the AWS Well Architected Tool
 2. **Follow the Guide**: Read the complete [step-by-step instructions](#conducting-the-review) below
 3. **Use the Checklist**: Reference [`docs/review-checklist.md`](docs/review-checklist.md) during your review
-4. **Generate Reports**: Refer to [`templates/sample-report-template.md`](templates/sample-report-template.md) for an example, and use the reporting feature within the Well Architected tool for consistent reporting
+4. **Generate Reports**: Refer to [`templates/sample-report-template.md`](templates/sample-report-template.md) for an example, and use the reporting feature within the Well Architected Tool for consistent reporting
 
 ## 📁 Project Structure
 
