@@ -243,5 +243,5 @@ For new users of this guide:
 ---
 
 **Maintained by:** AWS Solutions Architecture Team  
-**Contact:** [Contact Information]  
-**Last Updated:** [Date]
+**Contact:** rushealy@amazon.com  
+**Last Updated:** 2025-07-27
