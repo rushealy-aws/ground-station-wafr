@@ -104,7 +104,7 @@ Before scheduling the review session, conduct discovery to understand:
    aws wellarchitected import-lens --lens-alias ground-station-lens --json-string file://templates/ground-station-custom-lens.json
    ```
    
-   Or use the console:
+   Or use the AWS console:
    - Go to "Custom lenses" in the Well Architected Tool
    - Click "Import lens"
    - Upload the `templates/ground-station-custom-lens.json` file
