@@ -75,7 +75,7 @@ The AWS Ground Station custom lens extends the standard Well Architected Framewo
 Before scheduling the review session, conduct discovery to understand:
 
 **Mission Requirements:**
-- Types of satellites and missions (Earth observation, communications, scientific)
+- Types of satellite(s) and mission(s) (Earth observation, scientific, etc)
 - Data volume and processing requirements
 - Real-time vs. batch processing needs
 - Geographic coverage requirements
