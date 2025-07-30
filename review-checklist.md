@@ -24,7 +24,7 @@ Use this checklist to ensure comprehensive coverage during your Ground Station W
 - [ ] Understand integration points with other AWS services
 
 ### Logistics
-- [ ] Schedule review session(s) with appropriate duration (4-6 hours)
+- [ ] Schedule review session(s) with appropriate duration (1-3 hours)
 - [ ] Invite all necessary stakeholders (max 6-10 people)
 - [ ] Set up screen sharing and collaboration tools
 - [ ] Assign note-taker for the session
